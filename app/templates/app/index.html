@@ -413,7 +413,12 @@
               >
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
-                    <form id="registration-form" novalidate>
+                    <form
+                      id="registration-form"
+                      method="POST"
+                      action="{% url 'get-policy' pk=1 %}"
+                      novalidate
+                    >
                       {% csrf_token %}
                       <div class="modal-header">
                         <h5 class="modal-title" id="modalCenterTitle">
@@ -426,6 +431,7 @@
                             <input
                               type="text"
                               id="RegNoInput"
+                              name="RegNoInput"
                               class="form-control"
                               placeholder="eg: MH04HM0101"
                             />
@@ -434,8 +440,7 @@
                       </div>
                       <div class="modal-footer">
                         <button
-                          type="button"
-                          onclick="getData(1)"
+                          type="submit"
                           class="btn btn-primary"
                           data-bs-dismiss="modal"
                         >
@@ -476,9 +481,6 @@
                               placeholder="Enter Name"
                             />
                             <datalist id="cars">
-                              <option>jsdnv</option>
-                              <option>jsdndcfhb</option>
-                              <option>jsdndcsed</option>
                               {% for i in cars %}
                               <option>{{i.name}}</option>
                               {% endfor %}
@@ -512,7 +514,13 @@
               >
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
-                    <form id="model-form" novalidate>
+                    <form
+                      id="model-form"
+                      method="POST"
+                      action="{% url 'get-policy' pk=2 %}"
+                      novalidate
+                    >
+                      {% csrf_token %}
                       <div class="modal-header">
                         <h5 class="modal-title" id="modalCenterTitle">
                           Enter Model Details
@@ -526,13 +534,11 @@
                               list="models"
                               type="text"
                               id="modelInput"
+                              name="modelName"
                               class="form-control"
                               placeholder="Enter Model"
                             />
                             <datalist id="models">
-                              <option>jsdnv</option>
-                              <option>jsdndcfhb</option>
-                              <option>jsdndcsed</option>
                               {% for i in models %}
                               <option>{{ i.model }}</option>
                               {% endfor %}
@@ -542,8 +548,7 @@
                       </div>
                       <div class="modal-footer">
                         <button
-                          type="button"
-                          onclick="getData(3)"
+                          type="submit"
                           class="btn btn-primary"
                           data-bs-dismiss="modal"
                         >
@@ -588,7 +593,7 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <!-- <script async defer src="https://buttons.github.io/buttons.js' %}"></script> -->
-
+    {% if request.session.count == 1 %}
     <script>
       $(document).ready(function () {
         // $( "body" ).load(function() {
@@ -596,6 +601,7 @@
         // });
       });
     </script>
+    {% endif %}
     <!-- 
     <script>
       (function () {
@@ -671,38 +677,25 @@
     <script>
       function getData(val) {
         console.log(val);
-        if (val == 1) {
-          data = {
-            csrfmiddlewaretoken: document.getElementsByName(
-              "csrfmiddlewaretoken"
-            )[0].value,
-            method: 1,
-            reg_no: document.getElementById("RegNoInput").value,
-          };
-        } else if (val == 2) {
-          data = {
-            csrfmiddlewaretoken: document.getElementsByName(
-              "csrfmiddlewaretoken"
-            )[1].value,
-            method: 1,
-            make: document.getElementById("carInput").value,
-          };
-        } else if (val == 2) {
-          data = {
-            csrfmiddlewaretoken: document.getElementsByName(
-              "csrfmiddlewaretoken"
-            )[1].value,
-            method: 1,
-            make: document.getElementById("carInput").value,
-            model: document.getElementById("modelInput").value,
-          };
-        }
+        data = {
+          csrfmiddlewaretoken: document.getElementsByName(
+            "csrfmiddlewaretoken"
+          )[1].value,
+          method: 2,
+          make: document.getElementById("carInput").value,
+        };
         $.ajax({
-          method: POST,
+          method: "POST",
           data: data,
-          url: `get`,
+          url: `get-data-ajax`,
           success: function (r) {
-            console.log(r.data);
+            r = r.data;
+            var i;
+            for (i = 0; i < r.length; i++) {
+              $("#models").append(`
+                <option>${r[i].model}</option>
+              `);
+            }
           },
         });
       }
