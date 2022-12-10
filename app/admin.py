@@ -10,5 +10,13 @@ class ModelField(ImportExportModelAdmin, admin.ModelAdmin):
 class CompanyField(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ['name']
 
+class PolicyField(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ['display_name', 'description', 'parent_plan', 'net_premium', 
+    'gross_premium', 'cgst', 'sgst', 
+    'gst', 'net_strike_through_premium', 'covered_display_name', 
+    'not_covered_display_name', 'covered_description', 'not_covered_description', 
+    'model']
+
 admin.site.register(Company, CompanyField)
 admin.site.register(Model, ModelField)
+admin.site.register(Policy, PolicyField)
