@@ -7,12 +7,17 @@ from .models import *
 def Home(request):
     if 'make' not in request.session:
         request.session['count'] = 1
-        # policy = Policy.objects.all()
+        policy = Policy.objects.all()
     else:
         request.session['count'] = 2
-        # policy = Policy.objects.filter(model)
+        policy = Policy.objects.filter(model = request.session['model'])
+    if len(policy) == 0:
+        n = 0
+    else:
+        n = 1
     cars = Company.objects.all()
-    return render(request, "app/index.html", {'cars': cars})
+    print(n, policy)
+    return render(request, "app/index.html", {'cars': cars, 'policy': policy, 'n': n})
 
 def Error_404(request, exception):
     return render(request, "app/404.html")
@@ -40,3 +45,11 @@ def getPolicy(request, pk):
         else:
             request.session['model'] = request.POST['modelName']
         return redirect("home")
+
+def changeModel(request):
+    if 'no' in request.session:
+        del request.session['no']
+    del request.session['make']
+    del request.session['model']
+    request.session['count'] = 1
+    return redirect("home")
